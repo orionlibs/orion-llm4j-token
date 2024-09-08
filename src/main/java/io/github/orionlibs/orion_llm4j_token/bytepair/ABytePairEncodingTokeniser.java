@@ -1,5 +1,6 @@
-package io.github.orionlibs.orion_llm4j_token;
+package io.github.orionlibs.orion_llm4j_token.bytepair;
 
+import io.github.orionlibs.orion_llm4j_token.Utils;
 import io.github.orionlibs.orion_tuple.Pair;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Tokeniser
+public abstract class ABytePairEncodingTokeniser
 {
     protected Map<Pair<Integer, Integer>, Integer> merges;
     private String pattern;
@@ -19,7 +20,7 @@ public abstract class Tokeniser
     protected Map<Integer, byte[]> vocabulary;
 
 
-    public Tokeniser()
+    public ABytePairEncodingTokeniser()
     {
         this.merges = new HashMap<>();
         this.pattern = "";

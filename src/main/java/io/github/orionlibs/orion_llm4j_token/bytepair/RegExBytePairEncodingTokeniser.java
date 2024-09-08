@@ -1,6 +1,8 @@
-package io.github.orionlibs.orion_llm4j_token;
+package io.github.orionlibs.orion_llm4j_token.bytepair;
 
 import io.github.orionlibs.orion_assert.Assert;
+import io.github.orionlibs.orion_llm4j_token.AllowedSpecialTokenMode;
+import io.github.orionlibs.orion_llm4j_token.Utils;
 import io.github.orionlibs.orion_tuple.Pair;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
  * RegExTokeniser handles an optional RegEx splitting pattern.
  * RegExTokeniser handles optional special tokens.
  */
-public class RegExTokeniser extends Tokeniser
+public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
 {
     public static final String GPT2_SPLIT_PATTERN = "'(?:[sdmt]|ll|ve|re)| ?\\p{L}+| ?\\p{N}+| ?[^\\s\\p{L}\\p{N}]+|\\s+(?!\\S)|\\s+";
     public static final String GPT4_SPLIT_PATTERN = "'(?i:[sdmt]|ll|ve|re)|[^\\r\\n\\p{L}\\p{N}]?+\\p{L}+|\\p{N}{1,3}| ?[^\\s\\p{L}\\p{N}]++[\\r\\n]*|\\s*[\\r\\n]|\\s+(?!\\S)|\\s+";
@@ -25,7 +27,7 @@ public class RegExTokeniser extends Tokeniser
     private Map<Integer, String> inverseSpecialTokens;
 
 
-    public RegExTokeniser(String patternRegEx)
+    public RegExBytePairEncodingTokeniser(String patternRegEx)
     {
         super();
         this.patternRegEx = patternRegEx != null && !patternRegEx.isEmpty() ? patternRegEx : GPT2_SPLIT_PATTERN;

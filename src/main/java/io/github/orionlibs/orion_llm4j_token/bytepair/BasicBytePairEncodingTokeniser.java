@@ -1,6 +1,7 @@
-package io.github.orionlibs.orion_llm4j_token;
+package io.github.orionlibs.orion_llm4j_token.bytepair;
 
 import io.github.orionlibs.orion_assert.Assert;
+import io.github.orionlibs.orion_llm4j_token.Utils;
 import io.github.orionlibs.orion_tuple.Pair;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,9 +18,9 @@ import java.util.stream.IntStream;
  * Does not handle the regular expression splitting pattern.
  * Does not handle any special tokens.
  */
-public class BytePairEncodingTokeniser extends Tokeniser
+public class BasicBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
 {
-    public BytePairEncodingTokeniser()
+    public BasicBytePairEncodingTokeniser()
     {
         super();
     }
