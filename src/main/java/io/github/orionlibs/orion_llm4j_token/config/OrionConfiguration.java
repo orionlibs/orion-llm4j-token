@@ -1,4 +1,4 @@
-package io.github.orionlibs.project_name.config;
+package io.github.orionlibs.orion_llm4j_token.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ public class OrionConfiguration extends Properties
     /**
      * The location of the configuration file that has configuration for the features of this plugin.
      */
-    public static final String FEATURE_CONFIGURATION_FILE = "/io/github/orionlibs/project_name/configuration/orion-feature-configuration.prop";
+    public static final String FEATURE_CONFIGURATION_FILE = "/io/github/orionlibs/orion_llm4j_token/configuration/orion-feature-configuration.prop";
 
 
     public void loadFeatureConfiguration(InputStream customConfigStream) throws IOException
@@ -35,7 +35,7 @@ public class OrionConfiguration extends Properties
         }
         catch(IOException e)
         {
-            throw new IOException("Could not setup feature configuration for project_name: ", e);
+            throw new IOException("Could not setup feature configuration for Orion LLM4J Token: ", e);
         }
     }
 
@@ -51,7 +51,7 @@ public class OrionConfiguration extends Properties
         }
         catch(IOException e)
         {
-            throw new IOException("Could not setup feature configuration for project_name: ", e);
+            throw new IOException("Could not setup feature configuration for Orion LLM4J Token: ", e);
         }
     }
 

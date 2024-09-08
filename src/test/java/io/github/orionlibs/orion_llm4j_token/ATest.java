@@ -1,4 +1,4 @@
-package io.github.orionlibs.project_name;
+package io.github.orionlibs.orion_llm4j_token;
 
 import java.io.IOException;
 import java.util.TimeZone;
@@ -12,7 +12,7 @@ public class ATest
         System.setProperty("active.execution.profile", OrionDomain.testing);
     }
 
-    protected String loadJSONTestResource(String fileLocation)
+    protected String loadResourceAsString(String fileLocation)
     {
         try
         {
