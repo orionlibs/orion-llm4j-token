@@ -33,10 +33,12 @@ public class BasicBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
         int numberOfMergesToDo = vocabularySize - 256;
         //input text preprocessing
         byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
+        List<Integer> tokenIDs = new ArrayList<>();
         //list of integers in range 0..255
-        List<Integer> tokenIDs = IntStream.range(0, textBytes.length)
-                        .mapToObj(i -> textBytes[i] & 0xFF)   // box each byte as Byte
-                        .collect(Collectors.toList());
+        for(byte b : textBytes)
+        {
+            tokenIDs.add(b & 0xFF);
+        }
         //iteratively merge the most common pairs to create new tokens
         Map<Pair<Integer, Integer>, Integer> mergesTemp = new HashMap<>();
         Map<Integer, byte[]> vocabularyTemp = new HashMap<>();
@@ -59,7 +61,7 @@ public class BasicBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
             //replace all occurrences of pair in ids with idx
             tokenIDs = Utils.merge(tokenIDs, pairWithHighestFrequency, idx);
             //save the merge
-            mergesTemp.put(pairWithHighestFrequency, idx);
+            mergesTemp.putIfAbsent(pairWithHighestFrequency, idx);
             byte[] firstArray = vocabularyTemp.get(pairWithHighestFrequency.getFirst());
             byte[] secondArray = vocabularyTemp.get(pairWithHighestFrequency.getSecond());
             byte[] temp = new byte[firstArray.length + secondArray.length];
