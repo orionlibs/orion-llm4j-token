@@ -82,13 +82,6 @@ public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
                             .orElse(null);
             //mint a new token: assign it the next available id
             int idx = 256 + i;
-            //replace all occurrences of pair in ids with idx
-            List<List<Integer>> mergedTokenIDs = new ArrayList<>();
-            for(List<Integer> tokenIDs : tokenIDsForChunks)
-            {
-                List<Integer> tokenIDsTemp = Utils.merge(tokenIDs, pairWithHighestFrequency, idx);
-                mergedTokenIDs.add(tokenIDsTemp);
-            }
             //save the merge
             mergesTemp.putIfAbsent(pairWithHighestFrequency, idx);
             byte[] firstArray = vocabularyTemp.get(pairWithHighestFrequency.getFirst());
