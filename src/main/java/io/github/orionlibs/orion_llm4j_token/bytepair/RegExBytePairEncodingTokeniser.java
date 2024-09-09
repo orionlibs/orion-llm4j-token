@@ -14,8 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * RegExTokeniser handles an optional RegEx splitting pattern.
- * RegExTokeniser handles optional special tokens.
+ * RegExBytePairEncodingTokeniser handles an optional RegEx splitting pattern.
+ * RegExBytePairEncodingTokeniser handles optional special tokens.
  */
 public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
 {
@@ -30,10 +30,32 @@ public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
     public RegExBytePairEncodingTokeniser(String patternRegEx)
     {
         super();
-        this.patternRegEx = patternRegEx != null && !patternRegEx.isEmpty() ? patternRegEx : GPT2_SPLIT_PATTERN;
-        this.pattern = Pattern.compile(this.patternRegEx);
+        initialisePattern(patternRegEx);
         this.specialTokens = new HashMap<>();
         this.inverseSpecialTokens = new HashMap<>();
+    }
+
+
+    public RegExBytePairEncodingTokeniser(Map<String, Integer> specialTokens)
+    {
+        super();
+        initialisePattern(null);
+        registerSpecialTokens(specialTokens);
+    }
+
+
+    public RegExBytePairEncodingTokeniser(String patternRegEx, Map<String, Integer> specialTokens)
+    {
+        super();
+        initialisePattern(patternRegEx);
+        registerSpecialTokens(specialTokens);
+    }
+
+
+    private void initialisePattern(String patternRegEx)
+    {
+        this.patternRegEx = patternRegEx != null && !patternRegEx.isEmpty() ? patternRegEx : GPT2_SPLIT_PATTERN;
+        this.pattern = Pattern.compile(this.patternRegEx);
     }
 
 
@@ -134,7 +156,7 @@ public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
         String[] specialChunks = text.split(specialPattern);
         //now all the special characters are separated from the rest of the text
         //all chunks of text are encoded separately, then results are joined
-        List<Integer> tokenIDs = List.of();
+        List<Integer> tokenIDs = new ArrayList<>();
         for(String chunk : specialChunks)
         {
             if(specialTokensToUse.containsKey(chunk))
@@ -185,9 +207,9 @@ public class RegExBytePairEncodingTokeniser extends ABytePairEncodingTokeniser
     }
 
 
-    public void registerSpecialTokens(Map<String, Integer> specialTokens)
+    private void registerSpecialTokens(Map<String, Integer> specialTokens)
     {
-        this.specialTokens = specialTokens;
+        this.specialTokens = specialTokens != null && !specialTokens.isEmpty() ? specialTokens : new HashMap<>();
         this.inverseSpecialTokens = new HashMap<>();
         specialTokens.entrySet().forEach(e -> inverseSpecialTokens.put(e.getValue(), e.getKey()));
     }

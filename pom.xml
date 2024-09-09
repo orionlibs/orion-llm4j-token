@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.orionlibs</groupId>
     <artifactId>orion-llm4j-token</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>Orion LLM4J Token</name>
     <description>Java tokenisers including byte-pair encoder</description>
     <url>https://github.com/orionlibs/orion-llm4j-token</url>

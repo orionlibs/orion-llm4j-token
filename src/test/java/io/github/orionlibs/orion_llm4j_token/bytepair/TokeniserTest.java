@@ -6,7 +6,6 @@ import io.github.orionlibs.orion_llm4j_token.ATest;
 import io.github.orionlibs.orion_llm4j_token.AllowedSpecialTokenMode;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,24 @@ public class TokeniserTest extends ATest
     @Test
     void test_encodeDecodeIdentity_using_RegExBytePairEncodingTokeniser()
     {
-        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(null);
+        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser((String)null);
+        for(int i = 0; i < testStrings.size(); i++)
+        {
+            List<Integer> encoding = tokeniser.encode(unpackText(testStrings.get(i)));
+            String decoded = tokeniser.decode(encoding);
+            assertEquals(testStrings.get(i), decoded);
+        }
+        String taylorSwiftText = unpackText("file:/io/github/orionlibs/orion_llm4j_token/training-text.txt");
+        List<Integer> encoding = tokeniser.encode(taylorSwiftText);
+        String decoded = tokeniser.decode(encoding);
+        assertEquals(taylorSwiftText, decoded);
+    }
+
+
+    @Test
+    void test_encodeDecodeIdentity_using_RegExBytePairEncodingTokeniser_and_specialTokens()
+    {
+        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(specialTokens);
         for(int i = 0; i < testStrings.size(); i++)
         {
             List<Integer> encoding = tokeniser.encode(unpackText(testStrings.get(i)));
@@ -89,7 +105,7 @@ public class TokeniserTest extends ATest
     @Test
     void test_handlingOfSpecialTokens_using_RegExBytePairEncodingTokeniser()
     {
-        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(null);
+        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(specialTokens);
         List<Integer> encoding = tokeniser.encode(specialsString, AllowedSpecialTokenMode.ALL);
         String decoded = tokeniser.decode(encoding);
         assertEquals(specialsString, decoded);
@@ -97,7 +113,7 @@ public class TokeniserTest extends ATest
 
 
     @Test
-    void test_handlingOfSpecialTokens_using_BasicBytePairEncodingTokeniser()
+    void test_handlingOfSpecialText_using_BasicBytePairEncodingTokeniser()
     {
         BasicBytePairEncodingTokeniser tokeniser = new BasicBytePairEncodingTokeniser();
         List<Integer> encoding = tokeniser.encode(specialsString);
@@ -111,12 +127,30 @@ public class TokeniserTest extends ATest
     {
         RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(RegExBytePairEncodingTokeniser.GPT2_SPLIT_PATTERN);
         tokeniser.train(llamaText, 256 + 64);
-        tokeniser.registerSpecialTokens(new HashMap<>());
         List<Integer> tokenIDs = tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL);
         assertEquals(llamaText, tokeniser.decode(tokenIDs));
         String tmpDir = System.getProperty("java.io.tmpdir");
         new ModelSaver().saveModel(tokeniser, tmpDir + "/test_tokenizer_tmp");
-        tokeniser = new RegExBytePairEncodingTokeniser(null);
+        tokeniser = new RegExBytePairEncodingTokeniser((String)null);
+        new ModelLoader().loadModel(tokeniser, tmpDir + "/test_tokenizer_tmp.model");
+        assertEquals(llamaText, tokeniser.decode(tokenIDs));
+        assertEquals(llamaText, tokeniser.decode(tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL)));
+        assertEquals(tokenIDs, tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL));
+        new File(tmpDir + "/test_tokenizer_tmp.model").delete();
+        new File(tmpDir + "/test_tokenizer_tmp.vocab").delete();
+    }
+
+
+    @Test
+    void test_savingAndLoadingModel_using_RegExBytePairEncodingTokeniser_and_GPT2Pattern_and_specialTokens() throws IOException
+    {
+        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(RegExBytePairEncodingTokeniser.GPT2_SPLIT_PATTERN, specialTokens);
+        tokeniser.train(llamaText, 256 + 64);
+        List<Integer> tokenIDs = tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL);
+        assertEquals(llamaText, tokeniser.decode(tokenIDs));
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        new ModelSaver().saveModel(tokeniser, tmpDir + "/test_tokenizer_tmp");
+        tokeniser = new RegExBytePairEncodingTokeniser((String)null);
         new ModelLoader().loadModel(tokeniser, tmpDir + "/test_tokenizer_tmp.model");
         assertEquals(llamaText, tokeniser.decode(tokenIDs));
         assertEquals(llamaText, tokeniser.decode(tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL)));
@@ -131,12 +165,11 @@ public class TokeniserTest extends ATest
     {
         RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(RegExBytePairEncodingTokeniser.GPT4_SPLIT_PATTERN);
         tokeniser.train(llamaText, 256 + 64);
-        tokeniser.registerSpecialTokens(new HashMap<>());
         List<Integer> tokenIDs = tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL);
         assertEquals(llamaText, tokeniser.decode(tokenIDs));
         String tmpDir = System.getProperty("java.io.tmpdir");
         new ModelSaver().saveModel(tokeniser, tmpDir + "/test_tokenizer_tmp");
-        tokeniser = new RegExBytePairEncodingTokeniser(null);
+        tokeniser = new RegExBytePairEncodingTokeniser((String)null);
         new ModelLoader().loadModel(tokeniser, tmpDir + "/test_tokenizer_tmp.model");
         assertEquals(llamaText, tokeniser.decode(tokenIDs));
         assertEquals(llamaText, tokeniser.decode(tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL)));
@@ -147,7 +180,26 @@ public class TokeniserTest extends ATest
 
 
     @Test
-    void test_savingAndLoadingModel_using_BasicBytePairEncodingTokeniser_and_GPT4Pattern() throws IOException
+    void test_savingAndLoadingModel_using_RegExBytePairEncodingTokeniser_and_GPT4Pattern_and_specialTokens() throws IOException
+    {
+        RegExBytePairEncodingTokeniser tokeniser = new RegExBytePairEncodingTokeniser(RegExBytePairEncodingTokeniser.GPT4_SPLIT_PATTERN, specialTokens);
+        tokeniser.train(llamaText, 256 + 64);
+        List<Integer> tokenIDs = tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL);
+        assertEquals(llamaText, tokeniser.decode(tokenIDs));
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        new ModelSaver().saveModel(tokeniser, tmpDir + "/test_tokenizer_tmp");
+        tokeniser = new RegExBytePairEncodingTokeniser((String)null);
+        new ModelLoader().loadModel(tokeniser, tmpDir + "/test_tokenizer_tmp.model");
+        assertEquals(llamaText, tokeniser.decode(tokenIDs));
+        assertEquals(llamaText, tokeniser.decode(tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL)));
+        assertEquals(tokenIDs, tokeniser.encode(llamaText, AllowedSpecialTokenMode.ALL));
+        new File(tmpDir + "/test_tokenizer_tmp.model").delete();
+        new File(tmpDir + "/test_tokenizer_tmp.vocab").delete();
+    }
+
+
+    @Test
+    void test_savingAndLoadingModel_using_BasicBytePairEncodingTokeniser() throws IOException
     {
         BasicBytePairEncodingTokeniser tokeniser = new BasicBytePairEncodingTokeniser();
         tokeniser.train(llamaText, 256 + 64);
